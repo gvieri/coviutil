@@ -11,14 +11,17 @@ import sys
 import shutil
 import argparse 
 import numpy as np
+from beautifultable import BeautifulTable
 
 destdir="covid19"
 searchdir=destdir+"/csse_covid_19_data/csse_covid_19_daily_reports"
 
 def getOptions(args=sys.argv[1:]):
-    parser=argparse.ArgumentParser(description='fetch official COVID-19 data from github and, make aggregate set')
+    parser=argparse.ArgumentParser(description='fetch official COVID-19 data from github (https://github.com/CSSEGISandData/COVID-19) and, make aggregate set')
     parser.add_argument('-r','--ratio', help='add deaths/confirmed and recovered/confirmed ratio columns', action='store_true')
+    parser.add_argument('-n','--nicetable', help='it uses beautifultable lib to show the output in a formatted table', action='store_true')
     parser.add_argument('-s','--save', help='save results in a file (without header)', action='store_true' ) 
+    parser.add_argument('-c','--chart',help='it create single chart of Confirmed, Deaths, Recovered', action='store_true' )
     parser.add_argument('-d','--debug',help='enables debug info', action='store_true' )
     opt=parser.parse_args(args)
     return(opt) 
@@ -44,6 +47,8 @@ if __name__ == "__main__":
     opt=getOptions()
     ratio=opt.ratio
     save =opt.save
+    nicetable =opt.nicetable
+ 
     if os.path.isdir(destdir):
         shutil.rmtree(destdir)
 
@@ -59,6 +64,14 @@ if __name__ == "__main__":
     filenames.sort()
     orig_stdout=sys.stdout
 
+    if nicetable: 
+        print("nicetable enabled")
+        table=BeautifulTable()
+        if ratio:
+            header=["date","Confirmed","Death","Recovered","Death/Conf", "Recovered/Conf"]
+        else:
+            header=["date","Confirmed","Death","Recovered"]
+        table.column_headers=header
     if save:
         fo=open('out.csv','w')
         sys.stdout=fo
@@ -66,19 +79,33 @@ if __name__ == "__main__":
     for filename in filenames:
        if filename.endswith(ext):
            r=list(processafile(filename) )
+           tablerow=[]
            if r[1] >0:
-                r.append(float(r[1]/r[0]))
+               r.append(float(r[1]/r[0]))
            else:
-                r.append('NaN')
+               r.append('NaN')
            if r[2] >0:
-                r.append(float(r[2]/r[0]))
+               r.append(float(r[2]/r[0]))
            else:
-                r.append('NaN')
-           
-           if ratio:
-                print("{},{},{},{},{:.3f},{:.3f}".format(filename[:-4],r[0],r[1],r[2],r[3],r[4]) )
-           else: 
-                print("{},{},{},{}".format(filename[:-4],r[0],r[1],r[2]) )
+               r.append('NaN')
+
+           if nicetable: 
+               if ratio:
+                   tablerow=[filename[:-4],r[0],r[1],r[2],r[3],r[4]] 
+               else: 
+                   tablerow=[filename[:-4],r[0],r[1],r[2]] 
+               table.append_row(tablerow)
+           else:
+               if ratio:
+                   print("{},{},{},{},{:.3f},{:.3f}".format(filename[:-4],r[0],r[1],r[2],r[3],r[4]) )
+               else: 
+                   print("{},{},{},{}".format(filename[:-4],r[0],r[1],r[2]) )
+    if nicetable:
+        print(table)
+
+
     if save:
+        if table:
+             print(table)
         sys.stdout=orig_stdout
         fo.close()
