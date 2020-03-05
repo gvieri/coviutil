@@ -13,6 +13,13 @@ import argparse
 import numpy as np
 from beautifultable import BeautifulTable
 
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import numpy as np
+import datetime as dt
+from matplotlib.ticker import MaxNLocator
+
+
 destdir="covid19"
 searchdir=destdir+"/csse_covid_19_data/csse_covid_19_daily_reports"
 
@@ -45,8 +52,9 @@ def processafile(filename):
 ##########################################
 if __name__ == "__main__":
     opt=getOptions()
-    ratio=opt.ratio
-    save =opt.save
+    ratio     =opt.ratio
+    save      =opt.save
+    chart     =opt.chart
     nicetable =opt.nicetable
  
     if os.path.isdir(destdir):
@@ -65,7 +73,6 @@ if __name__ == "__main__":
     orig_stdout=sys.stdout
 
     if nicetable: 
-        print("nicetable enabled")
         table=BeautifulTable()
         if ratio:
             header=["date","Confirmed","Death","Recovered","Death/Conf", "Recovered/Conf"]
@@ -75,7 +82,8 @@ if __name__ == "__main__":
     if save:
         fo=open('out.csv','w')
         sys.stdout=fo
-        
+    
+    content=[]
     for filename in filenames:
        if filename.endswith(ext):
            r=list(processafile(filename) )
@@ -100,6 +108,8 @@ if __name__ == "__main__":
                    print("{},{},{},{},{:.3f},{:.3f}".format(filename[:-4],r[0],r[1],r[2],r[3],r[4]) )
                else: 
                    print("{},{},{},{}".format(filename[:-4],r[0],r[1],r[2]) )
+           content.append([filename[:-4],r[0],r[1],r[2]])
+    
     if nicetable:
         print(table)
 
@@ -109,3 +119,42 @@ if __name__ == "__main__":
              print(table)
         sys.stdout=orig_stdout
         fo.close()
+
+    if chart:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+        plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        dummy=np.array(content)
+        d=dummy[:,0]
+        days=[dt.datetime.strptime(d,'%m-%d-%Y').date() for d in d]
+        plt.grid()
+        datefile=dt.datetime.today().strftime('%Y%m%d')
+    ###### make chart of confirmed
+        plt.ylabel('Confirmed') 
+        confirmed=dummy[:,1]
+        plt.plot(days,confirmed)
+        plt.gcf().autofmt_xdate()
+        plt.savefig('Confirmed'+datefile)
+#        plt.show()
+
+
+    ###### make chart of Deaths
+        death=dummy[:,2]
+        plt.ylabel('Death') 
+        plt.plot(days,death)
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gcf().autofmt_xdate()
+        plt.savefig('Death'+datefile)
+#        plt.show()
+
+
+    ###### make chart of Recoverred
+        recovered=dummy[:,3]
+        plt.ylabel('Recovered') 
+        confirmed=dummy[:,1]
+        plt.plot(days,recovered)
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gcf().autofmt_xdate()
+        plt.savefig('Recovered'+datefile)
+#        plt.show()
+
