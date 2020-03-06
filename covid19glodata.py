@@ -115,8 +115,6 @@ if __name__ == "__main__":
 
 
     if save:
-        if nicetable:
-             print(table)
         sys.stdout=orig_stdout
         fo.close()
 
@@ -128,37 +126,39 @@ if __name__ == "__main__":
         dummy=np.array(content)
         d=dummy[:,0]
         days=[dt.datetime.strptime(d,'%m-%d-%Y').date() for d in d]
-        plt.grid()
         datefile=dt.datetime.today().strftime('%Y%m%d')
     ###### make chart of confirmed
         plt.ylabel('Confirmed') 
-        confirmed=dummy[:,1]
+        confirmed=np.array(dummy[:,1],dtype=int)
         plt.plot(days,confirmed)
+        plt.grid(visible=True)
         plt.gcf().autofmt_xdate()
         plt.savefig('Confirmed'+datefile)
 #        plt.show()
 
 
     ###### make chart of Deaths
-        death=dummy[:,2]
+        death=np.array(dummy[:,2],dtype=int)
         plt.figure()
         plt.ylabel('Death') 
         plt.plot(days,death)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gcf().autofmt_xdate()
+        plt.grid()
         plt.savefig('Death'+datefile)
 #        plt.show()
 
 
     ###### make chart of Recoverred
-        recovered=dummy[:,3]
+        recovered=np.array(dummy[:,3],dtype=int)
         plt.figure()
         plt.ylabel('Recovered') 
         confirmed=dummy[:,1]
         plt.plot(days,recovered)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.grid()
         plt.gcf().autofmt_xdate()
         plt.savefig('Recovered'+datefile)
 #        plt.show()
