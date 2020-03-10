@@ -29,6 +29,7 @@ def getOptions(args=sys.argv[1:]):
     parser.add_argument('-n','--nicetable', help='it uses beautifultable lib to show the output in a formatted table', action='store_true')
     parser.add_argument('-s','--save', help='save results in a file (without header)', action='store_true' ) 
     parser.add_argument('-c','--chart',help='it create single chart of Confirmed, Deaths, Recovered', action='store_true' )
+    parser.add_argument('-g','--grid',help='it adds grid to chart', action='store_true' )
     parser.add_argument('-d','--debug',help='enables debug info', action='store_true' )
     opt=parser.parse_args(args)
     return(opt) 
@@ -55,6 +56,7 @@ if __name__ == "__main__":
     ratio     =opt.ratio
     save      =opt.save
     chart     =opt.chart
+    grid      =opt.grid
     nicetable =opt.nicetable
  
     if os.path.isdir(destdir):
@@ -129,10 +131,14 @@ if __name__ == "__main__":
         datefile=dt.datetime.today().strftime('%Y%m%d')
     ###### make chart of confirmed
         plt.ylabel('Confirmed') 
+        plt.figure()
         confirmed=np.array(dummy[:,1],dtype=int)
         plt.plot(days,confirmed)
-        plt.grid(visible=True)
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gcf().autofmt_xdate()
+        if grid:
+            plt.grid()
         plt.savefig('Confirmed'+datefile)
 #        plt.show()
 
@@ -145,7 +151,8 @@ if __name__ == "__main__":
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gcf().autofmt_xdate()
-        plt.grid()
+        if grid:
+            plt.grid()
         plt.savefig('Death'+datefile)
 #        plt.show()
 
@@ -158,7 +165,8 @@ if __name__ == "__main__":
         plt.plot(days,recovered)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
-        plt.grid()
+        if grid:
+            plt.grid()
         plt.gcf().autofmt_xdate()
         plt.savefig('Recovered'+datefile)
 #        plt.show()
