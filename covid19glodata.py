@@ -30,6 +30,7 @@ def getOptions(args=sys.argv[1:]):
     parser.add_argument('-s','--save', help='save results in a file (without header)', action='store_true' ) 
     parser.add_argument('-c','--chart',help='it create single chart of Confirmed, Deaths, Recovered', action='store_true' )
     parser.add_argument('-g','--grid',help='it adds grid to chart', action='store_true' )
+    parser.add_argument('-l','--logyscale',help='it changes Y scale chart to log', action='store_true' )
     parser.add_argument('-d','--debug',help='enables debug info', action='store_true' )
     opt=parser.parse_args(args)
     return(opt) 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
     chart     =opt.chart
     grid      =opt.grid
     nicetable =opt.nicetable
+    logyscale =opt.logyscale
  
     if os.path.isdir(destdir):
         shutil.rmtree(destdir)
@@ -123,15 +125,15 @@ if __name__ == "__main__":
     if chart:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
 #        plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
-        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
-        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
         dummy=np.array(content)
         d=dummy[:,0]
         days=[dt.datetime.strptime(d,'%m-%d-%Y').date() for d in d]
         datefile=dt.datetime.today().strftime('%Y%m%d')
     ###### make chart of confirmed
-        plt.ylabel('Confirmed') 
         plt.figure()
+        plt.ylabel('Confirmed') 
+        if logyscale:
+            plt.yscale('log')
         confirmed=np.array(dummy[:,1],dtype=int)
         plt.plot(days,confirmed)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
@@ -147,6 +149,8 @@ if __name__ == "__main__":
         death=np.array(dummy[:,2],dtype=int)
         plt.figure()
         plt.ylabel('Death') 
+        if logyscale:
+            plt.yscale('log')
         plt.plot(days,death)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
@@ -161,6 +165,8 @@ if __name__ == "__main__":
         recovered=np.array(dummy[:,3],dtype=int)
         plt.figure()
         plt.ylabel('Recovered') 
+        if logyscale:
+            plt.yscale('log')
         confirmed=dummy[:,1]
         plt.plot(days,recovered)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
