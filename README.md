@@ -21,6 +21,9 @@ So:
 python covid19glodata.py -h 
 usage: covid19glodata.py [-h] [-r] [-n] [-s] [-c] [-d]
 
+However now we have the notebook versions. 
+Try to https://colab.research.google.com/github/gvieri/coviutil/blob/master/covid19glodata.ipynb. Remember: you needs a valid google account. 
+
 fetch official COVID-19 data from github
 (https://github.com/CSSEGISandData/COVID-19) and, make aggregate set
 
@@ -35,7 +38,8 @@ optional arguments:
 
 
 
-Stay tuned: I'm planning to add some chart and basic trend analisys. Let me know if you like the idea. 
+Stay tuned: I'm planning to add some other chart and basic trend analisys. Let me know if you like the idea. 
+I've added semilog chart. 
 
 TODO LIST:
 * add an option to select a given country (-C ?) 
