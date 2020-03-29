@@ -35,20 +35,43 @@ def getOptions(args=sys.argv[1:]):
     opt=parser.parse_args(args)
     return(opt) 
 
+def firstfilelayout(row): 
+# it will receive a row in argument: with first line (header) skipped. 
+    confirmed=deaths=recovered=0
+    if len(row[3])<1: row[3]=0
+    if len(row[4])<1: row[4]=0
+    if len(row[5])<1: row[5]=0
+    confirmed +=int(row[3])
+    deaths    +=int(row[4])
+    recovered +=int(row[5])
+    return(confirmed,deaths,recovered)
+    
+def secondfilelayout(row): 
+# it will receive a row in argument: with first line (header) skipped. 
+    confirmed=deaths=recovered=0
+    if len(row[7])<1: row[7]=0
+    if len(row[8])<1: row[8]=0
+    if len(row[9])<1: row[9]=0
+    confirmed +=int(row[7])
+    deaths    +=int(row[8])
+    recovered +=int(row[9])
+    return(confirmed,deaths,recovered)
+
 
 def processafile(filename):
     completefile=searchdir+"/"+filename
     confirmed=deaths=recovered=0
     with open(completefile,'r') as fi:
         reader=csv.reader(fi)
-        next(reader)
+        headers=next(reader) 
         for row in reader:
-            if len(row[3])<1: row[3]=0
-            if len(row[4])<1: row[4]=0
-            if len(row[5])<1: row[5]=0
-            confirmed +=int(row[3])
-            deaths    +=int(row[4])
-            recovered +=int(row[5])
+            if 'FIPS' in headers[0]:
+                res=secondfilelayout(row)
+            else:
+                res=firstfilelayout(row)
+            confirmed +=int(res[0])
+            deaths    +=int(res[1])
+            recovered +=int(res[2])
     return(confirmed,deaths,recovered)
 
 ##########################################
