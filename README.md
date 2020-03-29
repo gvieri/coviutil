@@ -1,6 +1,6 @@
 #coviutil 
 
-Stand for Corona Virus (COVID-19)` Utilities. I want to have some data in tables. So I written some code. 
+Stand for Corona Virus (COVID-19)` Utilities. I want to have some data in tables (I love tabular format). So I written some code. 
 
 License: GPL v 2.0.
 
