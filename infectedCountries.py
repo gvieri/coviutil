@@ -45,7 +45,7 @@ def normalizeDate(datet):
         (datei,dummy)=datet.split()
         dateo=datei
         structdate=()
-        if datei.find('/'):
+        if datei.find('/')>0:
             try:
                 structdate=time.strptime(datei,"%m/%d/%Y")
             except Exception:
@@ -56,6 +56,9 @@ def normalizeDate(datet):
                     dep="20"+dep
                 structdate[2]=structdate[0]
                 structdate[0]=dep
+        if datei.find('-')>0:
+            structdate=time.strptime(datei,"%Y-%m-%d")
+           
     dateo=str(structdate[0])+"-"+str(structdate[1])+"-"+str(structdate[2]) 
     return(dateo)
 
@@ -107,13 +110,21 @@ if __name__ == "__main__":
            completefile=searchdir+"/"+filename
            with open(completefile,'r') as fi:
                reader=csv.reader(fi)
-               next(reader)
+               headers=next(reader)
                for row in reader:
 #### need to normalize date  Italy 1/31/2020 23:59 to 2020-03-10T19:13:21
 #### need to normalize country name as Iran ... 
-                   country=normalizeCountry(row[1])
+                   if 'FIPS' in headers[0]:
+                      # new layout
+                      countryindex=3
+                      dateindex   =4
+                   else:
+                      countryindex=1
+                      dateindex   =2
+                    
+                   country=normalizeCountry(row[countryindex])
                    if country not in content:
-                      content[country]=normalizeDate(row[2])
+                      content[country]=normalizeDate(row[dateindex])
 
 
     for c,d in content.items():
