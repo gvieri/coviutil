@@ -155,6 +155,7 @@ if __name__ == "__main__":
     ###### make chart of confirmed
         plt.figure()
         plt.ylabel('Confirmed') 
+        plt.title('Confirmed') 
         if logyscale:
             plt.yscale('log')
         confirmed=np.array(dummy[:,1],dtype=int)
@@ -172,6 +173,7 @@ if __name__ == "__main__":
         death=np.array(dummy[:,2],dtype=int)
         plt.figure()
         plt.ylabel('Death') 
+        plt.title('Death') 
         if logyscale:
             plt.yscale('log')
         plt.plot(days,death)
@@ -188,6 +190,7 @@ if __name__ == "__main__":
         recovered=np.array(dummy[:,3],dtype=int)
         plt.figure()
         plt.ylabel('Recovered') 
+        plt.title('Recovered') 
         if logyscale:
             plt.yscale('log')
         confirmed=dummy[:,1]
