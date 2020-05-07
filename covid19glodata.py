@@ -193,7 +193,6 @@ if __name__ == "__main__":
         plt.title('Recovered') 
         if logyscale:
             plt.yscale('log')
-        confirmed=dummy[:,1]
         plt.plot(days,recovered)
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
@@ -202,4 +201,25 @@ if __name__ == "__main__":
         plt.gcf().autofmt_xdate()
         plt.savefig('Recovered'+datefile)
 #        plt.show()
+
+
+    ###### make chart of both Confirmed and Recovered
+        plt.figure()
+#        plt.ylabel('Recovered and Confirmed') 
+        plt.title('Recovered and Confirmed') 
+        
+        if logyscale:
+            plt.yscale('log')
+
+        plt.plot(days,confirmed,'r',label='Confirmed')
+        plt.plot(days,recovered,'g',label='Recovered')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend()
+        if grid:
+            plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('ConfRec'+datefile)
+#        plt.show()
+
 
