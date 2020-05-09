@@ -22,6 +22,8 @@ from matplotlib.ticker import MaxNLocator
 
 destdir="covid19"
 searchdir=destdir+"/csse_covid_19_data/csse_covid_19_daily_reports"
+precconfirmed=precrecovered=precdeath=0
+
 
 def getOptions(args=sys.argv[1:]):
     parser=argparse.ArgumentParser(description='fetch official COVID-19 data from github (https://github.com/CSSEGISandData/COVID-19) and, make aggregate set')
@@ -102,9 +104,9 @@ if __name__ == "__main__":
     if nicetable: 
         table=BeautifulTable()
         if ratio:
-            header=["date","Confirmed","Death","Recovered","Death/Conf", "Recovered/Conf"]
+            header=["date","Confirmed","Death","Recovered","d Confirmed","d Death","d Recovered","Death/Conf", "Rec./Conf"]
         else:
-            header=["date","Confirmed","Death","Recovered"]
+            header=["date","Confirmed","Death","Recovered","d Confirmed","d Death","d Recovered"]
         table.column_headers=header
     if save:
         fo=open('out.csv','w')
@@ -115,6 +117,13 @@ if __name__ == "__main__":
        if filename.endswith(ext):
            r=list(processafile(filename) )
            tablerow=[]
+           deltaconfirmed=r[0]-precconfirmed
+           deltadeath    =r[1]-precdeath
+           deltarecovered=r[2]-precrecovered
+           precconfirmed =r[0]
+           precdeath     =r[1]
+           precrecovered =r[2]
+
            if r[1] >0:
                r.append(float(r[1]/r[0]))
            else:
@@ -126,16 +135,16 @@ if __name__ == "__main__":
 
            if nicetable: 
                if ratio:
-                   tablerow=[filename[:-4],r[0],r[1],r[2],r[3],r[4]] 
+                   tablerow=[filename[:-4],r[0],r[1],r[2],deltaconfirmed,deltadeath,deltarecovered,r[3],r[4]] 
                else: 
-                   tablerow=[filename[:-4],r[0],r[1],r[2]] 
+                   tablerow=[filename[:-4],r[0],r[1],r[2],deltaconfirmed,deltadeath,deltarecovered] 
                table.append_row(tablerow)
            else:
                if ratio:
-                   print("{},{},{},{},{:.3f},{:.3f}".format(filename[:-4],r[0],r[1],r[2],r[3],r[4]) )
+                   print("{},{},{},{},{},{},{},{:.3f},{:.3f}".format(filename[:-4],r[0],r[1],r[2],deltaconfirmed,deltadeath,deltarecovered,r[3],r[4]) )
                else: 
-                   print("{},{},{},{}".format(filename[:-4],r[0],r[1],r[2]) )
-           content.append([filename[:-4],r[0],r[1],r[2]])
+                   print("{},{},{},{},{},{},{}".format(filename[:-4],r[0],r[1],r[2],deltaconfirmed,deltadeath,deltarecovered) )
+           content.append([filename[:-4],r[0],r[1],r[2],deltaconfirmed,deltadeath,deltarecovered])
     
     if nicetable:
         print(table)
@@ -221,5 +230,63 @@ if __name__ == "__main__":
         plt.gcf().autofmt_xdate()
         plt.savefig('ConfRec'+datefile)
 #        plt.show()
+
+    ###### make chart of delta Confirmed 
+        deltaconfirmed=np.array(dummy[:,4],dtype=int)
+        plt.figure()
+#        plt.ylabel('Recovered and Confirmed') 
+        plt.title('delta Confirmed') 
+        
+        if logyscale:
+            plt.yscale('log')
+
+        plt.plot(days,deltaconfirmed,'r',label='dConfirmed')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend()
+        if grid:
+            plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('deltaConf'+datefile)
+#        plt.show()
+
+    ###### make chart of delta death 
+        deltadeath=np.array(dummy[:,5],dtype=int)
+        plt.figure()
+#        plt.ylabel('Recovered and Confirmed') 
+        plt.title('delta Death') 
+        
+        if logyscale:
+            plt.yscale('log')
+
+        plt.plot(days,deltadeath,'r',label='dDeath')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend()
+        if grid:
+            plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('deltaDeath'+datefile)
+#        plt.show()
+
+    ###### make chart of delta Recovered 
+        deltarecovered=np.array(dummy[:,6],dtype=int)
+        plt.figure()
+#        plt.ylabel('Recovered and Confirmed') 
+        plt.title('delta Recovered') 
+        
+        if logyscale:
+            plt.yscale('log')
+
+        plt.plot(days,deltarecovered,'r',label='dRecovered')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend()
+        if grid:
+            plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('deltaRec'+datefile)
+#        plt.show()
+
 
 
