@@ -18,7 +18,7 @@ import matplotlib.dates as mdates
 import numpy as np
 import datetime as dt
 from matplotlib.ticker import MaxNLocator
-
+import bottleneck as bn
 
 destdir="covid19"
 searchdir=destdir+"/csse_covid_19_data/csse_covid_19_daily_reports"
@@ -162,13 +162,13 @@ if __name__ == "__main__":
         days=[dt.datetime.strptime(d,'%m-%d-%Y').date() for d in d]
         datefile=dt.datetime.today().strftime('%Y%m%d')
     ###### make chart of confirmed
-        plt.figure()
+        plt.figure(figsize=(10,10))
         plt.ylabel('Confirmed') 
         plt.title('Confirmed') 
         if logyscale:
             plt.yscale('log')
         confirmed=np.array(dummy[:,1],dtype=int)
-        plt.plot(days,confirmed)
+        plt.plot(days,confirmed,'r')
         plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
         plt.gcf().autofmt_xdate()
@@ -288,5 +288,44 @@ if __name__ == "__main__":
         plt.savefig('deltaRec'+datefile)
 #        plt.show()
 
+    ###### make chart of delta Confirmed, Death, Recovered 
+        deltarecovered=np.array(dummy[:,6],dtype=int)
+        plt.figure()
+#        plt.ylabel('Recovered and Confirmed') 
+        plt.title('delta') 
+        
+        if logyscale:
+            plt.yscale('log')
 
+        plt.plot(days,deltaconfirmed,'r',label='dConfirmed')
+        plt.plot(days,deltadeath,'black',label='dDeath')
+        plt.plot(days,deltarecovered,'g',label='dRecovered')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend()
+        if grid:
+            plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('delta'+datefile)
+#        plt.show()
+
+        win=5
+        mvadconfirmed = bn.move_mean(dconfirmed, window=win,min_count=1)
+        mvaddeath     = bn.move_mean(ddeath, window=win,min_count=1)
+        mvadrecovered = bn.move_mean(drecovered, window=win,min_count=1)
+        plt.figure()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+        plt.title('mva delta Confirmed Recovered and Confirmed')
+        if logyscale:
+          plt.yscale('log')
+        plt.plot(days,mvadconfirmed,'r',label='delta Confirmed')
+        plt.plot(days,mvaddeath,'black',label='delta Death')
+        plt.plot(days,mvadrecovered,'g',label='delta Recovered')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend() 
+        if grid:
+          plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('mvadRecDeathConf'+datefile)
 
