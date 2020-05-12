@@ -310,9 +310,9 @@ if __name__ == "__main__":
 #        plt.show()
 
         win=5
-        mvadconfirmed = bn.move_mean(dconfirmed, window=win,min_count=1)
-        mvaddeath     = bn.move_mean(ddeath, window=win,min_count=1)
-        mvadrecovered = bn.move_mean(drecovered, window=win,min_count=1)
+        mvadconfirmed = bn.move_mean(deltaconfirmed, window=win,min_count=1)
+        mvaddeath     = bn.move_mean(deltadeath, window=win,min_count=1)
+        mvadrecovered = bn.move_mean(deltarecovered, window=win,min_count=1)
         plt.figure()
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
         plt.title('mva delta Confirmed Recovered and Confirmed')
