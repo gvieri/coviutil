@@ -33,6 +33,7 @@ def getOptions(args=sys.argv[1:]):
     parser.add_argument('-c','--chart',help='it create single chart of Confirmed, Deaths, Recovered', action='store_true' )
     parser.add_argument('-g','--grid',help='it adds grid to chart', action='store_true' )
     parser.add_argument('-l','--logyscale',help='it changes Y scale chart to log', action='store_true' )
+    parser.add_argument('-m','--movingaveragewindow',help='moving average window dimension', nargs='?', const=5, type=int, default=5)
     parser.add_argument('-d','--debug',help='enables debug info', action='store_true' )
     opt=parser.parse_args(args)
     return(opt) 
@@ -85,6 +86,7 @@ if __name__ == "__main__":
     grid      =opt.grid
     nicetable =opt.nicetable
     logyscale =opt.logyscale
+    win       =opt.movingaveragewindow
  
     if os.path.isdir(destdir):
         shutil.rmtree(destdir)
@@ -309,7 +311,6 @@ if __name__ == "__main__":
         plt.savefig('delta'+datefile)
 #        plt.show()
 
-        win=5
         mvadconfirmed = bn.move_mean(deltaconfirmed, window=win,min_count=1)
         mvaddeath     = bn.move_mean(deltadeath, window=win,min_count=1)
         mvadrecovered = bn.move_mean(deltarecovered, window=win,min_count=1)
@@ -328,4 +329,23 @@ if __name__ == "__main__":
           plt.grid()
         plt.gcf().autofmt_xdate()
         plt.savefig('mvadRecDeathConf'+datefile)
+###################################################
+        plt.figure()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+        plt.title('mva delta Confirmed Recovered and Confirmed')
+        if logyscale:
+          plt.yscale('log')
+        plt.plot(days,mvadconfirmed,'r',linestyle='-.',label='mva delta Confirmed')
+        plt.plot(days,mvaddeath,'black',linestyle='-.',label='mva delta Death')
+        plt.plot(days,mvadrecovered,'g',linestyle='-.',label='mva delta Recovered')
+        plt.plot(days,deltaconfirmed,'r',label='dConfirmed')
+        plt.plot(days,deltadeath,'black',label='dDeath')
+        plt.plot(days,deltarecovered,'g',label='dRecovered')
+        plt.gca().xaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.gca().yaxis.set_major_locator( MaxNLocator(nbins = 10) )
+        plt.legend() 
+        if grid:
+          plt.grid()
+        plt.gcf().autofmt_xdate()
+        plt.savefig('mixmvadRecDeathConf'+datefile)
 
