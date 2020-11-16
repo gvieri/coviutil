@@ -1,6 +1,14 @@
 channels:
   - conda-forge
 dependencies:
+  - numpy
+  - csv
+  - shutil 
+  - argparse
+  - pandas
+  - datetime
+  - bottleneck
+  - IPython
   - appmode
   - beautifultable
   - matplotlib
