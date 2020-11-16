@@ -2,11 +2,10 @@ channels:
   - conda-forge
 dependencies:
   - numpy
-  - argparse
   - pandas
   - bottleneck
   - IPython
   - appmode
-  - beautifultable
+  - BeautifulTable
   - matplotlib
   - gitpython
