@@ -48,6 +48,6 @@ TODO LIST:
 * if the infection will continue, (I hope not) I will add some machine learning related functionnality. 
 * your suggestion? 
 
-If you like you can use colab: https://colab.research.google.com/github/gvieri/coviutil/blob/master/covid19glodata.ipynb . To use colab you must have a valid google account. 
+If you like you can use colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gvieri/coviutil/blob/master/covid19glodata.ipynb) . To use colab you must have a valid google account. 
 Enjoy. 
 
