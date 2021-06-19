@@ -44,9 +44,9 @@ def firstfilelayout(row):
     if len(row[3])<1: row[3]=0
     if len(row[4])<1: row[4]=0
     if len(row[5])<1: row[5]=0
-    confirmed +=int(row[3])
-    deaths    +=int(row[4])
-    recovered +=int(row[5])
+    confirmed +=int(float(row[3]))
+    deaths    +=int(float(row[4]))
+    recovered +=int(float(row[5]))
     return(confirmed,deaths,recovered)
     
 def secondfilelayout(row): 
@@ -55,15 +55,16 @@ def secondfilelayout(row):
     if len(row[7])<1: row[7]=0
     if len(row[8])<1: row[8]=0
     if len(row[9])<1: row[9]=0
-    confirmed +=int(row[7])
-    deaths    +=int(row[8])
-    recovered +=int(row[9])
+    confirmed +=int(float(row[7]))
+    deaths    +=int(float(row[8]))
+    recovered +=int(float(row[9]))
     return(confirmed,deaths,recovered)
 
 
 def processafile(filename):
     completefile=searchdir+"/"+filename
     confirmed=deaths=recovered=0
+    print("completafile in processafile ",completefile,"\n")
     with open(completefile,'r') as fi:
         reader=csv.reader(fi)
         headers=next(reader) 
@@ -72,9 +73,9 @@ def processafile(filename):
                 res=secondfilelayout(row)
             else:
                 res=firstfilelayout(row)
-            confirmed +=int(res[0])
-            deaths    +=int(res[1])
-            recovered +=int(res[2])
+            confirmed +=int(float(res[0]))
+            deaths    +=int(float(res[1]))
+            recovered +=int(float(res[2]))
     return(confirmed,deaths,recovered)
 
 ##########################################
