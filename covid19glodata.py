@@ -19,6 +19,7 @@ import numpy as np
 import datetime as dt
 from matplotlib.ticker import MaxNLocator
 import bottleneck as bn
+from datetime import datetime 
 
 destdir="covid19"
 searchdir=destdir+"/csse_covid_19_data/csse_covid_19_daily_reports"
@@ -101,7 +102,9 @@ if __name__ == "__main__":
     ext='csv' 
 
     filenames=listdir(searchdir)
-    filenames.sort()
+    filenames.remove('README.md')
+    filenames.remove('.gitignore')
+    filenames.sort(key = lambda date: datetime.strptime(date[:-4],'%m-%d-%Y'))
     orig_stdout=sys.stdout
 
     if nicetable: 
